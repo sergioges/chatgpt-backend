@@ -16,11 +16,11 @@ user = APIRouter()
 
 console = Console()
 
-
 # Get all users
 @user.get(
     "/users",
-    response_model=list[User],
+    # TODO Check documentation for show model as a list
+    # response_model=list[User],
     response_description="You can get all the users from DDBB",
     tags=["Users"],
 )
@@ -115,6 +115,7 @@ def get_user(id: str):
     tags=["Users"],
 )
 def update_user(id: str, user: User):
+    # TODO check if there is not send one of the data (name, mail, password and keep the same registration date)
     try:
         edited_user = user.dict()
         del edited_user["id"]
