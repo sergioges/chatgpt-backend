@@ -118,12 +118,14 @@ def update_user(id: str, userEdit: UserEdit):
     try:
         edited_user = userEdit.dict()
         del edited_user["id"]
+        del edited_user["registration"]
 
         database_user = connection.chatgptDB.user.find_one({"_id": ObjectId(id)})
 
         if not edited_user["name"]:
             edited_user["name"] = database_user["name"]
 
+        # TODO Validate the correct email format
         if not edited_user["email"]:
             edited_user["email"] = database_user["email"]
 
