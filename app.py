@@ -6,6 +6,7 @@ from dotenv import load_dotenv
 
 # init environment in cmd | conda activate api-chatgpt / https://www.youtube.com/watch?v=aE7qxfgubS8
 # init app with | uvicorn app:app --reload / https://www.youtube.com/watch?v=_eWEmRWhk9A
+# pip freeze > requirements.txt for updating the requirements
 # discard environment | conda deactivate
 
 app = FastAPI(
