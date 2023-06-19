@@ -2,7 +2,7 @@ from fastapi import APIRouter, Response, status
 from errors import control_errors
 from config.db import connection
 from schemas.user import userEntity, usersEntity
-from models.user import User
+from models.user import User, UserEdit
 from passlib.hash import sha256_crypt
 from datetime import datetime
 from bson import ObjectId
@@ -110,22 +110,34 @@ def get_user(id: str):
 # Update a specific user
 @user.put(
     "/users/{id}",
-    response_model=User,
+    response_model=UserEdit,
     response_description="You can update a specific user by the ID",
     tags=["Users"],
 )
-def update_user(id: str, user: User):
-    # TODO check if there is not send one of the data (name, mail, password and keep the same registration date)
+def update_user(id: str, userEdit: UserEdit):
     try:
-        edited_user = user.dict()
+        edited_user = userEdit.dict()
         del edited_user["id"]
 
         database_user = connection.chatgptDB.user.find_one({"_id": ObjectId(id)})
 
-        if not sha256_crypt.verify(edited_user["password"], database_user["password"]):
-            edited_user["password"] = sha256_crypt.encrypt(edited_user["password"])
-        else:
+        if not edited_user["name"]:
+            edited_user["name"] = database_user["name"]
+
+        if not edited_user["email"]:
+            edited_user["email"] = database_user["email"]
+
+        if not edited_user["password"]:
             edited_user["password"] = database_user["password"]
+        else:
+            edited_user["password"] = sha256_crypt.encrypt(edited_user["password"])
+
+        edited_user["registration"] = database_user["registration"]
+
+        # if not sha256_crypt.verify(edited_user["password"], database_user["password"]):
+        #     edited_user["password"] = sha256_crypt.encrypt(edited_user["password"])
+        # else:
+        #     edited_user["password"] = database_user["password"]
 
         connection.chatgptDB.user.find_one_and_update(
             {"_id": ObjectId(id)}, {"$set": edited_user}
