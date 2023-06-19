@@ -23,7 +23,7 @@ from rich.console import Console
 from typing import List, Dict
 
 # route_class=VerifyToken
-conversation = APIRouter()
+conversation = APIRouter(route_class=VerifyToken)
 load_dotenv()
 
 openai.api_key = getenv("CHATGPT_API_KEY")

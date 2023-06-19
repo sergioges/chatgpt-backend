@@ -9,7 +9,7 @@ class User(BaseModel):
     email: str
     password: str
     active: Optional[bool] = True
-    registration: Optional[datetime]
+    registration: str
 
 class UserEdit(BaseModel):
     id:  Optional[str]
@@ -17,4 +17,4 @@ class UserEdit(BaseModel):
     email: Optional[str]
     password: Optional[str]
     active: Optional[bool] = True
-    registration: Optional[datetime]
+    registration: Optional[str]

@@ -50,9 +50,6 @@ def login_user(login: Login):
         console.print({"token": user_token})
         print("☝️")
 
-        # Update date format to dd/mm/aa
-        user_granted["registration"] = user_granted["registration"].strftime("%d/%m/%y")
-
         return user_granted
     else:
         print("🙋‍♂️")

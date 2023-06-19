@@ -11,7 +11,7 @@ from rich import print
 from rich.console import Console
 
 # route_class=VerifyToken
-questions = APIRouter()
+questions = APIRouter(route_class=VerifyToken)
 
 user_data = {}
 user_questions = []

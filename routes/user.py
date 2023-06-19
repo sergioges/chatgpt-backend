@@ -53,7 +53,8 @@ def create_user(user: User):
             control_errors(8)
 
         new_user["password"] = sha256_crypt.encrypt(new_user["password"])
-        new_user["registration"] = datetime.now()
+        # Create registration date format dd/mm/yy
+        new_user["registration"] = datetime.now().strftime("%d/%m/%y")
         del new_user["id"]
 
         email_regex = r"^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$"
@@ -73,9 +74,6 @@ def create_user(user: User):
         else:
             user_id = connection.chatgptDB.user.insert_one(new_user).inserted_id
             user_created = connection.chatgptDB.user.find_one({"_id": user_id})
-
-            # Update date format to dd/mm/aa
-            user_created["registration"] = new_user["registration"].strftime("%d/%m/%y")
 
             print("😍")
             console.print("New user was created", style="bold blue")
