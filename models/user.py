@@ -9,7 +9,7 @@ class User(BaseModel):
     email: str
     password: str
     active: Optional[bool] = True
-    registration: str
+    registration: Optional[str]
 
 class UserEdit(BaseModel):
     id:  Optional[str]
