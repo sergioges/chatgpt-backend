@@ -221,7 +221,7 @@ def delete_specific_question(user_id: str, question_id:str):
             },
         )
 
-        return user_data
+        return user_questions
 
     except InvalidId as error:
         questions_errors(error, 2)
