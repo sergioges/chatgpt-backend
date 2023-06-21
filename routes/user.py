@@ -17,6 +17,7 @@ user = APIRouter()
 console = Console()
 
 # Get all users
+# TODO avoid to access if there is no token
 @user.get(
     "/users",
     # TODO Check documentation for show model as a list

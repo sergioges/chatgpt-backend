@@ -192,6 +192,44 @@ def get_user_questions(user_id: str):
 
 
 @questions.delete(
+    "/questions/{user_id}/{question_id}",
+    response_description="You can delete an specific question of a specific user by ID",
+    tags=["Questions"],
+)
+def delete_specific_question(user_id: str, question_id:str):
+    try:
+        user_data = questionEntity(
+            connection.chatgptDB.questions.find_one({"user_id": user_id})
+        )
+
+        user_questions = user_data["questions"]
+        for question_database in user_questions:
+            if question_id == question_database["question_id"]:
+                user_questions.remove(question_database)
+            else:
+                questions_errors(error, 2)
+
+        connection.chatgptDB.questions.find_one_and_update(
+            {"user_id": user_data["user_id"]},
+            {
+                "$set": dict(
+                    {
+                        "user_id": user_data["user_id"],
+                        "questions": user_questions,
+                    }
+                )
+            },
+        )
+
+        return user_data
+
+    except InvalidId as error:
+        questions_errors(error, 2)
+    except Exception as error:
+        questions_errors(error, 6)
+
+
+@questions.delete(
     "/questions/{user_id}",
     response_description="You can delete all questions from a specific user by ID",
     tags=["Questions"],
