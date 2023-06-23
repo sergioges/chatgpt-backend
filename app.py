@@ -9,6 +9,8 @@ from dotenv import load_dotenv
 # pip freeze > requirements.txt for updating the requirements
 # discard environment | conda deactivate
 
+# deploy app in Heroku https://www.youtube.com/watch?v=4hS0YOZD-g4
+
 app = FastAPI(
     title="API conversation by chatGPT",
     description="Backend structure for generating conversations with chatGPT and creating images background context using Unsplash API",
