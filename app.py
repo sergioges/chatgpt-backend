@@ -1,6 +1,6 @@
 from fastapi import FastAPI # https://www.youtube.com/watch?v=4e2VW3Nu-64
 from fastapi.middleware.cors import CORSMiddleware
-from routes import conversation, user, questions, login
+from routes import conversation, user, questions, login, gallery
 from docs import tags_metadata
 from dotenv import load_dotenv
 
@@ -37,5 +37,7 @@ app.include_router(conversation.conversation)
 app.include_router(questions.questions)
 
 app.include_router(login.login)
+
+app.include_router(gallery.gallery)
 
 #  TODO Queda pendiente hacer una evolución de la app crear un endpoint que permita crear galería de unsplash

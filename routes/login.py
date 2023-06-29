@@ -31,7 +31,11 @@ def write_token(user: dict):
     return token
 
 # TODO Falta personalizar la documentación
-@login.post("/login")
+@login.post(
+    "/login",
+    response_description="Get user access to the app",
+    tags=["Login"],
+)
 def login_user(login: Login):
     user_login = login.dict()
     user_database = connection.chatgptDB.user.find_one({"email": user_login["email"]})
