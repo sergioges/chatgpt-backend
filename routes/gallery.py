@@ -106,9 +106,6 @@ async def get_next_page(next_page: NextPage):
                 headers=headers,
             )
 
-        response.raise_for_status()
-        response_formatted = response.json()
-
         link_header = response.headers.get('Link')
         next_page_url = ''
         if link_header:
