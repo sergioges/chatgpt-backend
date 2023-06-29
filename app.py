@@ -39,5 +39,3 @@ app.include_router(questions.questions)
 app.include_router(login.login)
 
 app.include_router(gallery.gallery)
-
-#  TODO Queda pendiente hacer una evolución de la app crear un endpoint que permita crear galería de unsplash

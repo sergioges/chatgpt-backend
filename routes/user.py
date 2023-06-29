@@ -124,9 +124,13 @@ def update_user(id: str, userEdit: UserEdit):
         if not edited_user["name"]:
             edited_user["name"] = database_user["name"]
 
-        # TODO Validate the correct email format
         if not edited_user["email"]:
             edited_user["email"] = database_user["email"]
+        else:
+            email_regex = r"^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$"
+            if not re.match(email_regex, edited_user["email"]):
+                print("email format incorrect")
+                control_errors(3)
 
         if not edited_user["password"]:
             edited_user["password"] = database_user["password"]
@@ -154,8 +158,6 @@ def update_user(id: str, userEdit: UserEdit):
 
     except InvalidId:
         control_errors(2)
-    except Exception:
-        control_errors(6)
 
 
 # Delete a specific user
