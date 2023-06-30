@@ -1,4 +1,5 @@
 from fastapi import APIRouter, Response, status
+from middlewares.verify_token import VerifyToken
 from errors import control_errors
 from config.db import connection
 from schemas.user import userEntity, usersEntity
@@ -12,13 +13,13 @@ from rich import print  # https://www.youtube.com/watch?v=4zbehnz-8QU
 from rich.console import Console
 import re
 
+allUsers = APIRouter(route_class=VerifyToken)
 user = APIRouter()
 
 console = Console()
 
 # Get all users
-# TODO avoid to access if there is no token
-@user.get(
+@allUsers.get(
     "/users",
     # TODO Check documentation for show model as a list
     # response_model=list[User],
@@ -36,7 +37,7 @@ def get_all_users():
         return usersEntity(all_users)
 
     except Exception:
-        control_errors(5)
+        control_errors(1)
 
 
 # Create a new user

@@ -62,7 +62,7 @@ async def get_gallery(query: str):
                         "user": {
                             "name": picture["user"]["name"],
                             "link": picture["user"]["links"]["html"],
-                            "profile_image": picture["user"]["profile_image"]["medium"],
+                            "profile_image": picture["user"]["profile_image"]["large"],
                         },
                     }
                 )

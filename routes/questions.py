@@ -206,8 +206,6 @@ def delete_specific_question(user_id: str, question_id:str):
         for question_database in user_questions:
             if question_id == question_database["question_id"]:
                 user_questions.remove(question_database)
-            else:
-                questions_errors(error, 2)
 
         connection.chatgptDB.questions.find_one_and_update(
             {"user_id": user_data["user_id"]},
@@ -220,7 +218,8 @@ def delete_specific_question(user_id: str, question_id:str):
                 )
             },
         )
-
+        
+        user_questions.reverse()
         return user_questions
 
     except InvalidId as error:

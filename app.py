@@ -31,6 +31,7 @@ app.add_middleware(
 load_dotenv()
 
 app.include_router(user.user)
+app.include_router(user.allUsers)
 
 app.include_router(conversation.conversation)
 
