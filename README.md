@@ -4,16 +4,16 @@
 
 ![Teammate -- Your Professional Assistant](https://github.com/sergioges/teammate/blob/main/public/logo_readme.png?raw=true)
 
-## Descripción
-**Estructura backend** que genera conversaciones a través del motor (API) de [chatGPT](https://platform.openai.com/), además de conectar con la API de la galería CC [Unsplash](https://unsplash.com/developers) para proporcionar contenido visual y así enriquecer las conversaciones generadas.
+## Description
+**Backend structure** that generates conversations through the [chatGPT](https://platform.openai.com/) engine (API), in addition to connecting with the [Unsplash](https://unsplash.com/developers) Gallery API to provide visual content and enrich the generated conversations. 
 
-La intención de la herramienta es proporcionar un entorno seguro al usuario, donde queda registrado en una base de datos sus consultas, el contexto de la conversación y la imagen que personalizada la app desde el lado de front.
+The tool's intention is to provide a secure environment for the user, where their queries, conversation context, and personalized image from the front-end are stored in a database. 
 
-Las consultas almacenadas pueden ser actualizadas, reenviadas como nuevas consultas y eliminadas de la lista, para así tener el apartado de consultas siempre actualizado por el propio usuario.
+The stored queries can be updated, resent as new queries, and removed from the list, ensuring that the queries section is always up-to-date according to the user's preferences.
 
-En el apartado de Galería, podrá hacer una consulta a la API de Unsplash, para obtener material gráfico de calidad bajo el estatuto de _Creative Commons_, para que pueda enriquecer las consultas realizadas a la API de chatGPT.
+In the Gallery section, the user can make a query to the Unsplash API to obtain high-quality graphical material under the _Creative Commons_ license, enhancing the queries made to the chatGPT API.
 
-## Tecnología utilizada
+## Technology employed
 - **Conda** --> v^23.3
 - **Python** --> v^3.11
 - **Uvicorn** --> v^0.21
@@ -25,18 +25,18 @@ En el apartado de Galería, podrá hacer una consulta a la API de Unsplash, para
 - **Python-dotenv** --> v^1.0
 - More references --> [requirements.txt](https://github.com/sergioges/teammate-backend/blob/main/requirements.txt)
 
-## Forma de ejecutarse
-1. Crear un entorno virtual (Para trabajar la versión de python específica utilizamos conda)\
+## Execution method
+1. To create a virtual environment (to work with a specific version of Python, we use conda)\
 `conda activate api-chatgpt`
 
-2. Ejecutar requirements para instalar las instancias necesarias en un entorno virtual\
+2. Execute requirements to install the necessary instances in a virtual environment\
 `pip install -r requirements.txt`
 
-3. Arrancar la aplicación\
+3. Run the app\
 `uvicorn app:app --reload`
 
-## Tutoriales
-|Concepto | Link |
+## Tutorials
+|Concept | Link |
 |--       |--    |
 Install Conda | https://www.youtube.com/watch?v=aE7qxfgubS8
 Use Uvicorn | https://www.youtube.com/watch?v=_eWEmRWhk9A
