@@ -3,6 +3,8 @@ import certifi
 from os import getenv
 from dotenv import load_dotenv
 
+# Install MongoDB youtube.com/watch?v=fZgJHJO81dw
+
 load_dotenv()
 mongodb_access = getenv("MONGODB_ACCESS")
 is_local = getenv("IS_LOCAL")
