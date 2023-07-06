@@ -197,28 +197,32 @@ def make_question(user_id: str, question: Question):
     new_question = question.dict()
     try:
         new_question = question.dict()
-        # Contexto de todas las preguntas realizadas
-        conversations.append(new_question)
 
-        # Add questions to user database
-        add_user_questions(user_id, question)
-        
-        response_chatgpt = openai.ChatCompletion.create(
-            model="gpt-3.5-turbo", messages=conversations
-        )
+        if not new_question["content"]:
+            return {"role": "assistant", "content": "You missed an inquiry"}
+        else:
+            # Contexto de todas las preguntas realizadas
+            conversations.append(new_question)
 
-        response_content = response_chatgpt.choices[0].message.content
+            # Add questions to user database
+            add_user_questions(user_id, question)
+            
+            response_chatgpt = openai.ChatCompletion.create(
+                model="gpt-3.5-turbo", messages=conversations
+            )
 
-        # Contexto de todas las respuestas ofrecidas
-        response_formatted = {"role": "assistant", "content": response_content}
-        conversations.append(response_formatted)
+            response_content = response_chatgpt.choices[0].message.content
 
-        console.print("OpenAI API Conversation", style="bold blue")
-        print("🤖")
-        print(response_formatted)
-        print("o👌k")
+            # Contexto de todas las respuestas ofrecidas
+            response_formatted = {"role": "assistant", "content": response_content}
+            conversations.append(response_formatted)
 
-        return response_formatted
+            console.print("OpenAI API Conversation", style="bold blue")
+            print("🤖")
+            print(response_formatted)
+            print("o👌k")
+
+            return response_formatted
 
     except openai.error.AuthenticationError:
         raise HTTPException(status_code=error_list[0]["code"], detail=error_list[0])
