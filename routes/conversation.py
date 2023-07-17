@@ -124,7 +124,7 @@ def get_context(user_id: str):
         return context_data
     
     except InvalidId:
-        control_errors(2)
+        control_errors(1)
     except Exception:
         control_errors(2)
 
