@@ -1,6 +1,6 @@
 from fastapi import FastAPI # https://www.youtube.com/watch?v=4e2VW3Nu-64
 from fastapi.middleware.cors import CORSMiddleware
-from routes import conversation, user, questions, login, gallery
+from routes import conversation, user, questions, login, gallery, landing
 from docs import tags_metadata
 from dotenv import load_dotenv
 
@@ -41,3 +41,5 @@ app.include_router(questions.questions)
 app.include_router(login.login)
 
 app.include_router(gallery.gallery)
+
+app.include_router(landing.register)
