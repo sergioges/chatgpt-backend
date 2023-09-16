@@ -2,7 +2,7 @@ from pydantic import BaseModel
 from typing import Text, Optional
 from datetime import datetime
 
-# context model
+# question model
 class Question(BaseModel):
     role: str = "user"
     content: Text
@@ -12,3 +12,4 @@ class QuestionEdit(BaseModel):
     role: Optional[str]
     content: Text
     registration: Optional[datetime]
+    update: Optional[bool]

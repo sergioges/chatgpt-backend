@@ -59,6 +59,7 @@ def add_user_questions(user_id: str, question: Question):
                 "role": dict_question["role"],
                 "content": dict_question["content"],
                 "registration": datetime.now(),
+                "update": False
             }
             user_questions.append(new_question)
 
@@ -140,6 +141,7 @@ def update_user_question(user_id: str, question: QuestionEdit):
         for question_database in user_questions:
             if dict_question["question_id"] == question_database["question_id"]:
                 question_database["content"] = dict_question["content"]
+                question_database["update"] = False
 
         if user_data["clear_questions"] == "":
             clear_date = ""
