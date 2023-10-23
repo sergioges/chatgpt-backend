@@ -6,6 +6,7 @@ class Context(BaseModel):
     role: Optional[str] = "system"
     content: Text
     background: str
+    url: str
 
 class Context_response(BaseModel):
     image: Dict[str, str] = {"url": "string", "description": "string"}
@@ -19,3 +20,4 @@ class SavedContext(BaseModel):
     role: Optional[str] = "system"
     content: str
     background: str
+    url: str

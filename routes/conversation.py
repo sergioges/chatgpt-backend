@@ -151,6 +151,7 @@ def save_context(user_id: str, saved_context: SavedContext):
                             "user_id": user_id,
                             "content": context["content"],
                             "background": context["background"],
+                            "url": context["url"]
                         }
                     )
                 },
@@ -168,6 +169,7 @@ def save_context(user_id: str, saved_context: SavedContext):
                     "user_id": user_id,
                     "content": context["content"],
                     "background": context["background"],
+                    "url": context["url"]
                 }
             )
             new_context = contextEntity(
