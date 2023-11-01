@@ -2,8 +2,11 @@ from fastapi import APIRouter
 from middlewares.verify_token import VerifyToken
 from errors import questions_errors
 from config.db import connection
+import openai
+from os import getenv
+from dotenv import load_dotenv
 from schemas.questions import questionEntity, questionsEntity
-from models.questions import Question, QuestionEdit
+from models.questions import Question, QuestionEdit, QuestionImprove
 from datetime import datetime
 from bson import ObjectId
 from bson.objectid import InvalidId
@@ -12,11 +15,13 @@ from rich.console import Console
 
 # route_class=VerifyToken
 questions = APIRouter(route_class=VerifyToken)
+load_dotenv()
 
 user_data = {}
 user_questions = []
 console = Console()
 
+openai.api_key = getenv("CHATGPT_API_KEY")
 
 @questions.get(
     "/questions",
@@ -46,76 +51,93 @@ def get_all_questions():
 def add_user_questions(user_id: str, question: Question):
 # TODO Evitar que se guarden preguntas con ids de usuarios alterados y si son alterados devolver un error 404
     try:
-        if connection.chatgptDB.questions.find_one({"user_id": user_id}):
-            user_data = questionEntity(
-                connection.chatgptDB.questions.find_one({"user_id": user_id})
-            )
-            
-            user_questions = user_data["questions"]
-            dict_question = question.dict()
-            obj_id = ObjectId()
-            new_question = {
-                "question_id": str(obj_id),
-                "role": dict_question["role"],
-                "content": dict_question["content"],
-                "registration": datetime.now(),
-                "update": False
-            }
-            user_questions.append(new_question)
-
-            if user_data["clear_questions"] == "":
-                clear_date = ""
-            else:
-                clear_date = user_data["clear_questions"]
-
-            connection.chatgptDB.questions.find_one_and_update(
-                {"user_id": user_data["user_id"]},
-                {
-                    "$set": dict(
-                        {
-                            "user_id": user_data["user_id"],
-                            "clear_questions": clear_date,
-                            "questions": user_questions,
-                        }
-                    )
-                },
-            )
-
-            user_data = questionEntity(
-                connection.chatgptDB.questions.find_one({"user_id": user_id})
-            )
-            print(user_data)
-            return user_data
-        else:
-            dict_question = question.dict()
-            add_question = []
-            obj_id = ObjectId()
-            new_question = {
-                "question_id": str(obj_id),
-                "role": dict_question["role"],
-                "content": dict_question["content"],
-                "registration": datetime.now(),
-            }
-            add_question.append(new_question)
-            clear_date = ""
-            connection.chatgptDB.questions.insert_one(
-                {
-                    "user_id": user_id,
-                    "clear_questions": clear_date,
-                    "questions": add_question,
+        dict_question = question.dict()
+        if dict_question["update"] is None: # Add new question
+            if connection.chatgptDB.questions.find_one({"user_id": user_id}): # If there is a previous existing questions
+                user_data = questionEntity(
+                    connection.chatgptDB.questions.find_one({"user_id": user_id})
+                )
+                
+                user_questions = user_data["questions"]
+                # dict_question = question.dict()
+                obj_id = ObjectId()
+                new_question = {
+                    "question_id": str(obj_id),
+                    "role": dict_question["role"],
+                    "content": dict_question["content"],
+                    "registration": datetime.now(),
+                    "update": False
                 }
-            )
+                user_questions.append(new_question)
+
+                if user_data["clear_questions"] == "":
+                    clear_date = ""
+                else:
+                    clear_date = user_data["clear_questions"]
+
+                connection.chatgptDB.questions.find_one_and_update(
+                    {"user_id": user_data["user_id"]},
+                    {
+                        "$set": dict(
+                            {
+                                "user_id": user_data["user_id"],
+                                "clear_questions": clear_date,
+                                "questions": user_questions,
+                            }
+                        )
+                    },
+                )
+
+                user_data = questionEntity(
+                    connection.chatgptDB.questions.find_one({"user_id": user_id})
+                )
+                console.print("Add new question into User Data created before", style="bold blue")
+                print("❓")
+                print(user_data)
+                print("o👌k")
+                return user_data
+            else: # There is no previos questions created
+                dict_question = question.dict()
+                add_questions = []
+                obj_id = ObjectId()
+                new_question = {
+                    "question_id": str(obj_id),
+                    "role": dict_question["role"],
+                    "content": dict_question["content"],
+                    "registration": datetime.now(),
+                    "update": False
+                }
+                add_questions.append(new_question)
+                clear_date = ""
+                connection.chatgptDB.questions.insert_one(
+                    {
+                        "user_id": user_id,
+                        "clear_questions": clear_date,
+                        "questions": add_questions,
+                    }
+                )
+                user_data = questionEntity(
+                    connection.chatgptDB.questions.find_one({"user_id": user_id})
+                )
+                console.print("Add new question into User Data for first time", style="bold blue")
+                print("❓")
+                print(user_data)
+                print("o👌k")
+                return user_data
+        else: # The question exists so it is no added to the de DDBB
             user_data = questionEntity(
-                connection.chatgptDB.questions.find_one({"user_id": user_id})
-            )
+                    connection.chatgptDB.questions.find_one({"user_id": user_id})
+                )
+            console.print("Show an improved question into User Data", style="bold blue")
+            print("❓")
             print(user_data)
+            print("o👌k")
             return user_data
 
     except InvalidId as error:
         questions_errors(error, 2)
     except Exception as error:
         questions_errors(error, 6)
-
 
 # TODO Si hemos borrado todas las preguntas y queremos editar una que existía previamente, no genera error y devuelve
 # {
@@ -141,7 +163,7 @@ def update_user_question(user_id: str, question: QuestionEdit):
         for question_database in user_questions:
             if dict_question["question_id"] == question_database["question_id"]:
                 question_database["content"] = dict_question["content"]
-                question_database["update"] = False
+                question_database["update"] = dict_question["update"]
 
         if user_data["clear_questions"] == "":
             clear_date = ""
@@ -168,6 +190,67 @@ def update_user_question(user_id: str, question: QuestionEdit):
     except Exception as error:
         questions_errors(error, 6)
 
+@questions.put(
+        "/questions/improve/{user_id}",
+        response_description="You can update the question for better improvement using chatGPT engine",
+        tags=["Questions"],
+)
+def improve_user_questions(user_id: str, question: QuestionImprove):
+    try:
+        user_data = questionEntity(
+            connection.chatgptDB.questions.find_one({"user_id": user_id})
+        )
+
+        dict_question = question.dict()
+        user_prompt = dict_question["content"]
+        user_language = dict_question["language"]
+        chatgpt_prompt = f"Improve the next prompt for getting better and more accuracy answer: \"{user_prompt}\". The answer I need it in {user_language}. ONLY ANWSER WITH THE PROMPT IMPROVED. Do not include words like please. Do not include quotation marks"
+
+        response_content = ""
+        if dict_question["update"] == False:
+            response_chatgpt = openai.ChatCompletion.create(
+                    model="gpt-4", messages=[
+                        {
+                            "role": "user",
+                            "content": chatgpt_prompt
+                        }
+                    ]
+                )
+            response_content = response_chatgpt.choices[0].message.content
+        else:
+            response_content = user_prompt
+
+        user_questions = user_data["questions"]
+        for question_database in user_questions:
+            if dict_question["question_id"] == question_database["question_id"]:
+                question_database["content"] = response_content
+                question_database["update"] = True
+
+        if user_data["clear_questions"] == "":
+            clear_date = ""
+        else:
+            clear_date = user_data["clear_questions"]
+
+        connection.chatgptDB.questions.find_one_and_update(
+            {"user_id": user_data["user_id"]},
+            {
+                "$set": dict(
+                    {
+                        "user_id": user_data["user_id"],
+                        "clear_questions": clear_date,
+                        "questions": user_questions,
+                    }
+                )
+            },
+        )
+
+        user_questions.reverse()
+        return user_questions
+
+    except InvalidId as error:
+        questions_errors(error, 2)
+    except Exception as error:
+        questions_errors(error, 6)
 
 @questions.get(
     "/questions/{user_id}",
