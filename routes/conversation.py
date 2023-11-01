@@ -196,18 +196,14 @@ def save_context(user_id: str, saved_context: SavedContext):
     tags=["Conversation"],
 )
 def make_question(user_id: str, question: Question):
-    new_question = question.dict()
     try:
         new_question = question.dict()
-
         if not new_question["content"]:
             return {"role": "assistant", "content": "You missed an inquiry"}
         else:
             # Contexto de todas las preguntas realizadas
+            del new_question["update"] # Delete update, because chatGPT only receive role and content
             conversations.append(new_question)
-
-            # Add questions to user database
-            add_user_questions(user_id, question)
             
             response_chatgpt = openai.ChatCompletion.create(
                 model="gpt-3.5-turbo", messages=conversations
@@ -218,6 +214,9 @@ def make_question(user_id: str, question: Question):
             # Contexto de todas las respuestas ofrecidas
             response_formatted = {"role": "assistant", "content": response_content}
             conversations.append(response_formatted)
+
+             # Add questions to user database
+            add_user_questions(user_id, question)
 
             console.print("OpenAI API Conversation", style="bold blue")
             print("🤖")
