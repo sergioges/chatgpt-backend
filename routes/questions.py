@@ -209,7 +209,7 @@ def improve_user_questions(user_id: str, question: QuestionImprove):
         response_content = ""
         if dict_question["update"] == False:
             response_chatgpt = openai.ChatCompletion.create(
-                    model="gpt-4", messages=[
+                    model="gpt-3.5-turbo", messages=[
                         {
                             "role": "user",
                             "content": chatgpt_prompt
