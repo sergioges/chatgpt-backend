@@ -21,6 +21,7 @@ from dotenv import load_dotenv
 from rich import print  # https://www.youtube.com/watch?v=4zbehnz-8QU
 from rich.console import Console
 from typing import List, Dict
+import random
 
 # route_class=VerifyToken
 conversation = APIRouter(route_class=VerifyToken)
@@ -197,25 +198,31 @@ def save_context(user_id: str, saved_context: SavedContext):
 )
 def make_question(user_id: str, question: Question):
     try:
-        new_question = question.dict()
-        if not new_question["content"]:
+        dict_question = question.dict()
+        if not dict_question["content"]:
             return {"role": "assistant", "content": "You missed an inquiry"}
         else:
             # Contexto de todas las preguntas realizadas
-            del new_question["update"] # Delete update, because chatGPT only receive role and content
-            conversations.append(new_question)
-            
-            response_chatgpt = openai.ChatCompletion.create(
+            del dict_question["update"] # Delete update, because chatGPT only receive role and content
+            conversations.append(dict_question)
+
+            response_content = ""
+            # Testing method if in the question yo are using "Tsarkon"
+            if "Tsarkon" in dict_question["content"]:
+                response_content = "Lorem fistrum voluptate qui benemeritaar dolore. Te va a hasé pupitaa duis ut ahorarr amatomaa consequat pupita reprehenderit incididunt amatomaa. Minim veniam diodenoo pupita jarl reprehenderit. Reprehenderit ese que llega duis al ataquerl enim aute. Diodeno nostrud ullamco incididunt ad magna jarl laboris."
+                words = response_content.split()
+                random.shuffle(words)
+                response_content = ' '.join(words)      
+            else:
+                response_chatgpt = openai.ChatCompletion.create(
                 model="gpt-3.5-turbo", messages=conversations
-            )
+                )
+                response_content = response_chatgpt.choices[0].message.content
 
-            response_content = response_chatgpt.choices[0].message.content
-
-            # Contexto de todas las respuestas ofrecidas
             response_formatted = {"role": "assistant", "content": response_content}
             conversations.append(response_formatted)
 
-             # Add questions to user database
+            # Add questions to user database
             add_user_questions(user_id, question)
 
             console.print("OpenAI API Conversation", style="bold blue")
