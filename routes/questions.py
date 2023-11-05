@@ -207,18 +207,23 @@ def improve_user_questions(user_id: str, question: QuestionImprove):
         chatgpt_prompt = f"Improve the next prompt for getting better and more accuracy answer: \"{user_prompt}\". The answer I need it in {user_language}. ONLY ANWSER WITH THE PROMPT IMPROVED. Do not include words like please. Do not include quotation marks"
 
         response_content = ""
-        if dict_question["update"] == False:
-            response_chatgpt = openai.ChatCompletion.create(
-                    model="gpt-3.5-turbo", messages=[
-                        {
-                            "role": "user",
-                            "content": chatgpt_prompt
-                        }
-                    ]
-                )
-            response_content = response_chatgpt.choices[0].message.content
-        else:
+        # Testing method if in the question yo are using "Tsarkon"
+        if "Tsarkon" in dict_question["content"]:
             response_content = user_prompt
+        else:
+            # Security control to avoid using chatgpt engine if the prompt was updated before
+            if dict_question["update"] == False:
+                response_chatgpt = openai.ChatCompletion.create(
+                        model="gpt-3.5-turbo", messages=[
+                            {
+                                "role": "user",
+                                "content": chatgpt_prompt
+                            }
+                        ]
+                    )
+                response_content = response_chatgpt.choices[0].message.content
+            else:
+                response_content = user_prompt
 
         user_questions = user_data["questions"]
         for question_database in user_questions:
